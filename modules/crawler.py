@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 import pandas as pd
 import re
 import requests
+from webdriver_manager.chrome import ChromeDriverManager
 
 from typing import List, Tuple
 
@@ -81,6 +82,20 @@ def waitPageLoaded2(pdriver, pcssSelector1, pcssSelector2):
         '''Trang load ko thành công do quá timeout 5s'''
         return False
 
+def getURLsSearch(keyword: str):
+    """
+    Hàm này dùng để lấy urls theo keyword
+
+    Args:
+        keyword (str): keyword của nhóm mặt hàng cần lấy
+    Returns:
+        (list[str]): chuổi url của các keyword
+    """
+    keyword=keyword.strip().lower().replace(" ", "%20")
+    keyword_url= 'https://shopee.vn/search?keyword='+ str(keyword)
+    return keyword_url
+    
+
 
 def getProductURLs(purl: str, prange: tuple, pcssSelector: str):
     """
@@ -95,7 +110,7 @@ def getProductURLs(purl: str, prange: tuple, pcssSelector: str):
         (list[str]): chuổi các url của các product
     """
     '''Chọn driver để crawl data là Firefox'''
-    driver = webdriver.Firefox()
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     
     '''Dùng để lưu các hyperlink đến các product's landing page'''
     product_urls = []
@@ -132,7 +147,7 @@ class Review:
     
     
 def getProductReviews(pproductURL: str):
-    driver = webdriver.Firefox()
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     product_reviews = [] # chứa các review object
     locator_button_focus = (By.CLASS_NAME, "shopee-button-solid--primary") # button của selected navigation page
     locator_button = (By.CLASS_NAME, "shopee-icon-button--right") # button next navigation page 

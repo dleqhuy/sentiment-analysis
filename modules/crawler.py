@@ -7,8 +7,7 @@ from selenium.webdriver.common.keys import Keys
 import pandas as pd
 import re
 import requests
-from webdriver_manager.chrome import ChromeDriverManager
-
+from selenium.webdriver.chrome.options import Options
 from typing import List, Tuple
 
 def waitPageLoaded(pdriver, plogoClassname):
@@ -110,8 +109,11 @@ def getProductURLs(purl: str, prange: tuple, pcssSelector: str):
         (list[str]): chuổi các url của các product
     """
     '''Chọn driver để crawl data là Firefox'''
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-    
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome('/usr/bin/chromedriver',options = chrome_options)    
     '''Dùng để lưu các hyperlink đến các product's landing page'''
     product_urls = []
     
@@ -147,8 +149,11 @@ class Review:
     
     
 def getProductReviews(pproductURL: str):
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-    product_reviews = [] # chứa các review object
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome('/usr/bin/chromedriver',options = chrome_options)    product_reviews = [] # chứa các review object
     locator_button_focus = (By.CLASS_NAME, "shopee-button-solid--primary") # button của selected navigation page
     locator_button = (By.CLASS_NAME, "shopee-icon-button--right") # button next navigation page 
     buttons_box = {} # kiểm tra các page nào đã duyệt qua rồi

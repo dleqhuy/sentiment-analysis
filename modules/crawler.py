@@ -9,7 +9,6 @@ import re
 import requests
 from selenium.webdriver.chrome.options import Options
 from typing import List, Tuple
-
 def waitPageLoaded(pdriver, plogoClassname):
     '''
     Vì các trang product landing page dc thiết kế dưới dạng dynamic site (tức
@@ -40,13 +39,11 @@ def waitPageLoaded(pdriver, plogoClassname):
     except TimeoutException:
         '''Trang load ko thành công do quá timeout 5s'''
         return False
-
 def waitPageLoaded2(pdriver, pcssSelector1, pcssSelector2):
     """
     Hàm này cũng dùng để scroll trang nhưng trong quá trình scroll sẽ kiểm tra
     xem có css selector nào match với pcssSelector2 ko, nếu có thì dừng lại, còn
     ko thì tiếp tục scroll tiếp cho đến khi ko còn scroll dc nữa
-
     Returns:
         (bool): True nếu tìm thấy pcssSelector2, hoặc đến cuối trang, False nếu
             cả hai điều kiện trên đều ko tìm dc
@@ -91,7 +88,7 @@ def getURLsSearch(keyword: str):
         (list[str]): chuổi url của các keyword
     """
     keyword=keyword.strip().lower().replace(" ", "%20")
-    keyword_url= 'https://shopee.vn/search?keyword='+ str(keyword)
+    keyword_url= 'https://shopee.vn/search?keyword='+ str(keyword)+'&page='
     return keyword_url
     
 
@@ -121,13 +118,12 @@ def getProductURLs(purl: str, prange: tuple, pcssSelector: str):
     for i in range(prange[0], prange[1]):
         url = f"{purl}{i}" # access vào trang thứ i
         driver.get(url) # mở Firefox để access vào `url`
-        
+
         '''Nếu đi đến cuối trang thành công'''
         if waitPageLoaded(driver, "header-with-search__logo-section"):
             '''Lấy các href values từ tất cả thẻ anchor thỏa `pcssSelector`'''
             new_product_urls = [anchor.get_attribute('href') for anchor in driver.find_elements_by_css_selector(pcssSelector)]
             product_urls += new_product_urls # thêm vào kết quả trả về
-        
     '''Đóng Firefox'''    
     driver.close()
     driver.quit()
@@ -153,7 +149,8 @@ def getProductReviews(pproductURL: str):
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome('/usr/bin/chromedriver',options = chrome_options)    product_reviews = [] # chứa các review object
+    driver = webdriver.Chrome('/usr/bin/chromedriver',options = chrome_options)
+    product_reviews = [] # chứa các review object
     locator_button_focus = (By.CLASS_NAME, "shopee-button-solid--primary") # button của selected navigation page
     locator_button = (By.CLASS_NAME, "shopee-icon-button--right") # button next navigation page 
     buttons_box = {} # kiểm tra các page nào đã duyệt qua rồi

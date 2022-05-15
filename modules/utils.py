@@ -5,10 +5,9 @@ import unicodedata
 import glob
 from os.path import isfile, join
 from typing import List, Dict
-import modules.user_object_defined as udt
 
 
-def readCSVfromfolder(pdirectoryPath: List[str]) -> (udt.Dataframe):
+def readCSVfromfolder(pdirectoryPath: List[str]) -> (Dataframe):
     """
     Dùng để đọc tất cả các file csv
     
@@ -16,7 +15,7 @@ def readCSVfromfolder(pdirectoryPath: List[str]) -> (udt.Dataframe):
         pdirectoryPath (List[str]): đường dẫn của folder chứa các file csv
 
     Returns:
-        [udt.Dataframe]: pandas dataframe 
+        [Dataframe]: pandas dataframe 
     """
     # Lấy tất cả các directory path của các lần ta tiến hành crawl data
     all_files = glob.glob(os.path.join(pdirectoryPath, "*.csv"))

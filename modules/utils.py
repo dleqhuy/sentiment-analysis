@@ -7,12 +7,12 @@ from os.path import isfile, join
 from typing import List, Dict
 
 
-def readCSVfromfolder(pdirectoryPath: List[str]):
+def readCSVfromfolder(pdirectoryPath):
     """
     Dùng để đọc tất cả các file csv
     
     Args:
-        pdirectoryPath (List[str]): đường dẫn của folder chứa các file csv
+        pdirectoryPath: đường dẫn của folder chứa các file csv
 
     Returns:
         [Dataframe]: pandas dataframe 

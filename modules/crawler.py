@@ -1,10 +1,55 @@
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 import pandas as pd
 import numpy as np
+import time
 import re
 import requests
+from selenium.webdriver.chrome.options import Options
 from typing import List, Tuple
+def waitPageLoaded(pdriver):
+    '''
+    Vì các trang product landing page dc thiết kế dưới dạng dynamic site (tức
+    data dc load lên dựa vào các javascript event khi người dùng có sự tương
+    tác), và các comment chỉ hiển thị khi user lăn chuột đến phần comment, nên
+    hàm này giúp giả lập làm điều này.
+    '''
+    '''Trong 5s, đợi logo shopee hiện lên'''
+    time.sleep(5)
 
-def getProductSearch(keyword: str):
+    '''Chiều cao cũ của trang'''    
+    old_height = 0
+
+    '''Chiều cao mà trang có thể lăn đến ở thời điểm hiện tại'''
+    total_height = int(pdriver.execute_script("return document.body.scrollHeight"))
+    '''Scroll đến chiều cao mà trang đã load dc'''
+    for i in range(1, total_height, 100):
+      pdriver.execute_script("window.scrollTo(0, {});".format(i))
+
+def find_number(text:str):
+    """
+    Hàm này dùng để lấy số lượng bán
+
+    Args:
+        text (str): số lượng bán của mặt hàng VD:28k
+    Returns:
+        num: số lượng bán của mặt hàng chuyển thành số VD 28000
+    """
+    if text=='':
+      sell_number=np.nan
+    else:
+      text=text.split()
+      sell_number=text[2]
+      if "k" in sell_number:
+        sell_number=sell_number.replace('k','000')
+        sell_number=sell_number.replace(',','')
+      sell_number=int(sell_number)
+    return sell_number
+def getURLsSearch(keyword: str):
     """
     Hàm này dùng để lấy urls theo keyword
 
@@ -13,16 +58,59 @@ def getProductSearch(keyword: str):
     Returns:
         (str): chuổi url của các keyword
     """
+    keyword=keyword.strip().lower().replace(" ", "%20")
+    keyword_url= 'https://shopee.vn/search?keyword='+ str(keyword)+'&page='
+    return keyword_url
     
-    url = "https://shopee.vn/api/v2/search_items/?by=relevancy&keyword={}&limit=100&newest=0&order=desc&page_type=search".format(
-        keyword_search
-    )
 
-    r = requests.get(url, headers=headers).json()
-    df = pd.DataFrame(r["items"])
-    df.to_csv('abc.csv', index=False)
-    #return 
+def getProductURLs(purl: str, prange: tuple, pcssSelector: str):
+    """
+    Hàm này dùng để lấy tất cả các product's urls thỏa pcssSelector
+
+    Args:
+        purl (str): trang chính của nhóm mặt hàng cần lấy
+        prange (tuple): một tuple (a, b) là số trang chứa các gallary product của shopee
+        pcssSelector (str): CSS selector
+
+    Returns:
+        (list[str]): chuổi các url và số lượng bán của các product
+    """
+    '''Chọn driver để crawl data là Firefox'''
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome('/usr/bin/chromedriver',options = chrome_options)    
+    '''Dùng để lưu các hyperlink đến các product's page'''
+    product_info = []
+    '''Đi từ trang 0 đến 99 (UI là 1 đến 100)'''
+    for i in range(prange[0], prange[1]):
+        url = f"{purl}{i}" # access vào trang thứ i
+        driver.get(url) # mở Firefox để access vào `url`
+        
+        '''đi đến cuối trang '''
+        waitPageLoaded(driver)
+        '''Lấy các href values từ tất cả thẻ anchor thỏa `pcssSelector`'''
+        items = driver.find_elements(by=By.CLASS_NAME, value=pcssSelector)
+        for it in (items):
+          try:
+            sell_number_product = it.find_element(By.CSS_SELECTOR,'[class="r6HknA"]').text
+            sell_number_product = find_number(sell_number_product)
+            new_product_urls = it.find_element(by=By.CSS_SELECTOR,value='a').get_attribute("href")
+            
+          except:
+            sell_number_product = np.nan
+            new_product_urls = np.nan
+
+          product_info.append((new_product_urls,sell_number_product)) # thêm vào kết quả trả về
+          
+    '''Đóng Firefox'''
+    driver.close()
+    driver.quit()
     
+    return product_info
+            
+
 class Review:
     def __init__(self, pcomment: str, prating: int):
         """

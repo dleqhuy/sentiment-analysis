@@ -186,7 +186,7 @@ def getProductReviewsAPI(pproductURL: str) -> (List[Review]):
 
     no_reviews = 0 # đây là trang navigation cần lấy, bắt đầu từ 0
 
-    for no_reviews in range(10):#lấy 10 page vmt đầu tiên
+    while True:#lấy 10 page vmt đầu tiên
         res = collect_comment(no_reviews*6, product_id, shop_id) # trả về response
         if not res:
           break# nếu như comment trả về toàn là empty thì đã hết data để crawl và API đang trả về rác

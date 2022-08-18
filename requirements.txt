@@ -1,7 +1,4 @@
-selenium
 emojis
-pyenchant
 numpy
 pandas
 requests
-scikit-learn

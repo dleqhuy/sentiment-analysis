@@ -110,7 +110,6 @@ def getProductURLs(purl: str, prange: tuple, pcssSelector: str):
     
     return product_info
             
-
 class Review:
     def __init__(self, pcomment: str, prating: int):
         """
@@ -148,7 +147,7 @@ def getProductReviewsAPI(pproductURL: str) -> (List[Review]):
             ('filter', '0'),
             ('flag', '1'),
             ('itemid', pproductID),
-            ('limit', '6'), # số 6 ở đây là nếu đếm số comment trong một navigation thì một trang có tối đa là 6 comment
+            ('limit', '20'),
             ('offset', ppage),
             ('shopid', pshopID),
             ('type', '0'))
@@ -157,23 +156,6 @@ def getProductReviewsAPI(pproductURL: str) -> (List[Review]):
         response = requests.get('https://shopee.vn/api/v2/item/get_ratings', params=params)
         return response.json().get('data').get('ratings')
     
-    def parse_comment(presponse) -> (Tuple[int, str]):
-        """
-        Hàm này dùng để parse một response từ API thành hai phần là comment và rating
-
-        Args:
-            presponse ([type]): response trả về vừ API
-
-        Returns:
-            Tuple[int, str]: lần lượt là rating và comment của review
-        """
-        ratting = []
-        comment = []
-        for elem in presponse:
-            ratting.append(elem.get('rating_star'))
-            comment.append(elem.get('comment'))
-        return ratting, comment
-        
     
     '''
       Mỗi một URL sản phẩm nếu bạn chú ý sẽ có một thành phần là `i.0284272429.2342427424` như thế này,
@@ -183,15 +165,23 @@ def getProductReviewsAPI(pproductURL: str) -> (List[Review]):
     identifier: str  = re.search("i\.\d+.\d+", pproductURL).group(0)
     _, shop_id, product_id = identifier.split('.')
     product_reviews = []
+    rattings =  []
+    comments =  []
 
     no_reviews = 0 # đây là trang navigation cần lấy, bắt đầu từ 0
 
-    while True:#lấy 10 page vmt đầu tiên
-        res = collect_comment(no_reviews*6, product_id, shop_id) # trả về response
-        if not res:
-          break# nếu như comment trả về toàn là empty thì đã hết data để crawl và API đang trả về rác
-        rattings, comments = parse_comment(res) # parse nó thành comment và rating
-
+    while True:
+        res = collect_comment(no_reviews, product_id, shop_id) # trả về response
+        i = 1
+        for i, rating in enumerate(res, 1):
+          rattings.append(rating["rating_star"])
+          comments.append(rating["comment"])
+        
+        if i % 20:
+            break
+            
+        no_reviews += 20
+        
         for comment, ratting in zip(comments, rattings): # bỏ vào kết quả tra về
             if not comment: continue # đụng đến comment rỗng thì ngừng
             product_reviews.append(Review(comment, ratting))

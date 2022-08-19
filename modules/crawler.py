@@ -110,18 +110,7 @@ def getProductURLs(purl: str, prange: tuple, pcssSelector: str):
     
     return product_info
             
-class Review:
-    def __init__(self, pcomment: str, prating: int):
-        """
-        Constructor
-        
-        Args:
-            pcomment (str): comment
-            prating (int): rating nằm trong khoảng [1, 5]
-        """
-        self.icomment = pcomment
-        self.irating = prating       
-
+     
 def getProductReviewsAPI(pproductURL: str) -> (List[Review]):
     """
     Hàm này dùng để crawl data bằng cách sử dụng API.
@@ -180,12 +169,11 @@ def getProductReviewsAPI(pproductURL: str) -> (List[Review]):
         if i % 20:
             break
             
-        no_reviews += 20
-        
         for comment, ratting in zip(comments, rattings): # bỏ vào kết quả tra về
             if not comment: continue # đụng đến comment rỗng thì ngừng
-            product_reviews.append(Review(comment, ratting))
-            
+            product_reviews.append((comment, ratting))
+        
+        no_reviews += 20
     return product_reviews
 
 

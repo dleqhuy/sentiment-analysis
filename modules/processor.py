@@ -175,15 +175,3 @@ def removeEmptyOrDuplicateComment(previews: pd.DataFrame) -> (pd.DataFrame):
     previews = previews.drop_duplicates(subset=['normalize_comment'])
     
     return previews.reset_index(drop=True)
-def printAfterProcess(pdataframe: pd.DataFrame, pcolumnName: str = 'label'):
-    """
-    Dùng để in các giá trị về shape, số lượng các sample của từng nhóm mỗi khi ta chỉnh
-    sửa dataframe
-    Args:
-        pdataframe (pd.DataFrame): các reviews
-        pcolumnName (str): cột cần value_count
-    """
-    print(f"Shape: {pdataframe.shape}")
-    print(pdataframe[pcolumnName].value_counts())
-    
-    

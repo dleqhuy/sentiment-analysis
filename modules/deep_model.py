@@ -44,7 +44,7 @@ class SentimentLSTM:
         vocab_size = len(self.tokenizer.word_index) + 1
         self.embedding_dim = self.X.shape[1]
         self.model = Sequential()
-        self.model.add(Input(shape=(100,), name='input'))
+        self.model.add(Input(shape=(self.embedding_dim,), name='input'))
         self.model.add(Embedding(vocab_size, self.embedding_dim, input_length=100, name='embedding'))
         self.model.add(LSTM(units=pno_units, dropout=pdropout, recurrent_dropout=pdropout, name='lstm'))
         self.model.add(Dense(2, activation='softmax', name='output'))

@@ -13,6 +13,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.metrics import accuracy_score
 
 
+
 class SentimentModel:
     def __init__(self, pmodel, pvector, py):
         self.model = pmodel

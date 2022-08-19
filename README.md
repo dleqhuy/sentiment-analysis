@@ -1,5 +1,7 @@
 # Sentiment_Analysis
- 
+
+## Sentiment Analysis for Shopee
+
 |                                                             	| Accuracy on Training Set 	| Accuracy on Validation Set 	| Accuracy on Validation Set 	|
 |:------------------------------------------------------------	|:------------------------:	|:--------------------------:	|:--------------------------:	|
 | TF-IDF & SVC                                                	| 0.904                    	| 0.855                      	| 0.852                      	|

@@ -26,3 +26,29 @@ def readCSVfromfolder(pdirectoryPath):
 
     return df_data.dropna().reset_index(drop=True)
             
+def buildDictionaryFromFile(ppath: str, psuffix: bool = False) -> (Dict[str, str]):
+    """
+    Dùng để xây dựng một từ điển tử filepath
+
+    Args:
+        ppath (str): đường dẫn file
+        psuffix (bool): 
+
+    Returns:
+        [Dict[str, str]]: 
+    """
+    d = {}
+    
+    with open(ppath) as rows:
+        if not psuffix:
+            for row in rows:
+                prefix, suffix = row.strip().split(',')
+                prefix = unicodedata.normalize('NFD', prefix.strip())
+                suffix = unicodedata.normalize('NFD', suffix.strip())
+                d[prefix] = suffix
+        else:
+            for row in rows:
+                prefix = unicodedata.normalize('NFD', row.strip())
+                d[prefix] = True
+                
+    return d

@@ -25,6 +25,8 @@ def readCSVfromfolder(pdirectoryPath):
     df_data  = pd.concat(df_from_each_file, ignore_index=True)
 
     return df_data.dropna().reset_index(drop=True)
+
+      
             
 def buildDictionaryFromFile(ppath: str, psuffix: bool = False) -> (Dict[str, str]):
     """
@@ -52,3 +54,24 @@ def buildDictionaryFromFile(ppath: str, psuffix: bool = False) -> (Dict[str, str
                 d[prefix] = True
                 
     return d
+
+
+
+def buildListFromFile(ppath: str) -> (List[str]):
+    """
+    Tạo List[str] chứa các từ trong ppath
+
+    Args:
+        ppath (str): đường dẫn đến file cần đọc
+
+    Returns:
+        (List[str]): 
+    """
+    d = []
+    
+    with open(ppath) as rows:
+        for row in rows:
+            row = unicodedata.normalize('NFD', row.strip())
+            d.append(row)
+            
+    return d         

@@ -1,5 +1,4 @@
 import re
-import emojis
 import unicodedata
 import pandas as pd
 

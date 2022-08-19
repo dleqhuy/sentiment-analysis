@@ -1,4 +1,3 @@
-import plotly.graph_objects as go
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -6,15 +5,13 @@ import unicodedata
 import numpy as np
 import pickle
 import time
-import re
 import os
 
-from sklearn.model_selection import train_test_split, cross_validate, GridSearchCV
-from sklearn.metrics import classification_report, confusion_matrix, plot_roc_curve
+from sklearn.model_selection import train_test_split, cross_validate
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.metrics import roc_auc_score, accuracy_score
+from sklearn.metrics import accuracy_score
 
-from typing import List
 
 class SentimentModel:
     def __init__(self, pmodel, pvector, py):
@@ -113,9 +110,7 @@ def evaluation(tunning_models, X_train_vec, y_train, X_test_vec, y_test):
         y_test_pred = model.predict(X_test_vec)
         train_acc = accuracy_score(y_train, y_train_pred)
         test_acc = accuracy_score(y_test, y_test_pred)
-        train_roc_auc = roc_auc_score(y_train, y_train_pred)
-        test_roc_auc = roc_auc_score(y_test, y_test_pred)
-        res.append([name, train_acc, test_acc, train_roc_auc, test_roc_auc])
+        res.append([name, train_acc, test_acc])
         
     res = pd.DataFrame(res, columns=['model', 'train_acc', 'test_acc'])
     res.sort_values(by=['test_acc'], ascending=False, inplace=True)

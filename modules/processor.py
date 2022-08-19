@@ -1,10 +1,9 @@
 import re
 import emojis
 import unicodedata
+import pandas as pd
 
 from typing import List, Dict
-import unicodedata
-import pandas as pd
 
 '''Pattern dùng để kiểm tra text có chứa url hay ko'''
 URL = unicodedata.normalize('NFD', r"(?i)\b((?:http[s{0,1}]?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
@@ -30,6 +29,21 @@ def containsURL(ptext: str) -> (int):
     """
     flag = re.search(URL, ptext)
     return int(flag is not None)
+
+
+
+def decodeEmoji(ptext: str) -> (str):
+    """
+    decode emoji từ comment
+
+    Args:
+        ptext (str): comment
+
+    Returns:
+        [str]: string chứa các emoji đã decode
+    """
+    return emojis.decode(ptext)
+
 
 
 def removeSpecialLetters(ptext: str) -> (str):

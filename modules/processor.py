@@ -4,7 +4,7 @@ import unicodedata
 
 from typing import List, Dict
 import unicodedata
-
+import pandas as pd
 
 '''Pattern dùng để kiểm tra text có chứa url hay ko'''
 URL = unicodedata.normalize('NFD', r"(?i)\b((?:http[s{0,1}]?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
@@ -30,48 +30,6 @@ def containsURL(ptext: str) -> (int):
     """
     flag = re.search(URL, ptext)
     return int(flag is not None)
-
-
-def containAdvertisement(ptext: str) -> (int):
-    """
-    Lọc các ptext mà upper letter chiếm hơn 1 nữa độ dài chuổi
-
-    Args:
-        ptext (str): review
-
-    Returns:
-        [int]: 1 nếu upper letter chiếm hơn 1 nữa độ dài chuổi, otherwise 0
-    """
-    text_no_upper = re.sub(UTF8_UPPER, '', ptext) # thay các upper letter thành ''
-    return len(text_no_upper) >= 0.5*len(ptext)
-
-
-def extractEmoji(ptext: str) -> (str):
-    """
-    Trích xuất emoji từ comment
-
-    Args:
-        ptext (str): comment
-
-    Returns:
-        [str]: string chứa các emoji
-    """
-    return ' '.join(list(emojis.get(ptext)))
-
-
-def normalizeComment(ptext: str, plower: bool = True) -> (str):
-    """
-    Chuẩn hóa text bằng cách lower nó sau đó sử dụng phương pháp NFD để biểu diễn text
-
-    Args:
-        ptext (str): comment
-        plower (bool): có lower ko
-
-    Returns:
-        [str]: comment đã lower và chuẩn hóa
-    """
-    ptext = ptext.lower() if plower else ptext
-    return unicodedata.normalize('NFD', ptext)
 
 
 def removeSpecialLetters(ptext: str) -> (str):
@@ -189,18 +147,29 @@ def removeStopwords(ptext: str, plist: List[str]) -> (str):
     return re.sub(r'(\s)\1+', r'\1', ptext).strip()
 
 
-def removeEmptyOrDuplicateComment(previews: Dataframe) -> (Dataframe):
+def removeEmptyOrDuplicateComment(previews: pd.DataFrame) -> (pd.DataFrame):
     """
     Xóa các empty hoặc duplicate sample
 
     Args:
-        previews (Dataframe): comment
+        previews (pd.DataFrame): comment
 
     Returns:
-        (Datafrane):
+        (pd.DataFrame):
     """
     previews = previews[previews['normalize_comment'] != '']
     previews = previews.drop_duplicates(subset=['normalize_comment'])
     
     return previews.reset_index(drop=True)
+def printAfterProcess(pdataframe: pd.DataFrame, pcolumnName: str = 'label'):
+    """
+    Dùng để in các giá trị về shape, số lượng các sample của từng nhóm mỗi khi ta chỉnh
+    sửa dataframe
+    Args:
+        pdataframe (pd.DataFrame): các reviews
+        pcolumnName (str): cột cần value_count
+    """
+    print(f"Shape: {pdataframe.shape}")
+    print(pdataframe[pcolumnName].value_counts())
+    
     

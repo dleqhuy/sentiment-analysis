@@ -96,7 +96,7 @@ def train(lst_models, X_vectorizer, y, cv):
             print('\tModel {} has been trained in {:,.2f} seconds'.format(mdl_name, (toc - tic)))
             
     
-    res_table = pd.DataFrame(res_table, columns=['vectorizer', 'model', 'train_acc', 'test_acc',
+    res_table = pd.DataFrame(res_table, columns=['vectorizer', 'model', 'train_acc', 'test_acc', 'diff_acc',
                                                  'train_acc_std', 'test_acc_std', 'fit_time'])
     res_table.sort_values(by=['test_acc'], ascending=False, inplace=True)
     return res_table.reset_index(drop=True)     

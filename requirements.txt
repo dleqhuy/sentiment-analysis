@@ -4,4 +4,4 @@ numpy
 pandas
 requests
 scikit-learn
-py_vncorenlp
+underthesea

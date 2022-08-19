@@ -1,7 +1,3 @@
 selenium
 pyenchant
-numpy
-pandas
-requests
-scikit-learn
 underthesea

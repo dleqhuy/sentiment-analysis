@@ -14,7 +14,7 @@ góm,gớm
 gê,ghê
 dỏm,dởm
 nsc,nói chuyện
-nc,nói chuyện
+nc,nước
 ns,nói
 lun,luôn
 okela,ok

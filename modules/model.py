@@ -36,10 +36,7 @@ class SentimentModel:
     def info(self):
         print(self.model)
         
-    def rocAuc(self, X, y_true):
-        X_vec = self.vectorizer.transform(X)
-        plot_roc_curve(self.model, X_vec, y_true)
-        plt.show()
+
 
 def loadData(ppath: str):
     X = pd.read_csv(f"{ppath}/X.csv")
@@ -48,62 +45,23 @@ def loadData(ppath: str):
     return X, y
 
 
-def reviewStatistic(pdata: pd.Series, pis_emoji=False):
-    words_dict = {}
-    
-    for i, sen in enumerate(pdata):
-        for word in sen.split(' '):
-            if words_dict.get(word, None) == None:
-                words_dict[word] = [1, 1] # freq whole, freq document
-            else:
-                words_dict[word][0] += 1
-                words_dict[word][1] += int(words_dict[word][1] <= i)
-    
-    if not pis_emoji:     
-        return pd.DataFrame({
-            'word': words_dict.keys(),
-            'freq': [v for v, _ in words_dict.values()],
-            'freq_doc': [v for _, v in words_dict.values()]
-        }).sort_values(by=['freq', 'freq_doc']).reset_index(drop=True)
 
-    return pd.DataFrame({
-        'word': words_dict.keys(),
-        'encode': [emojis.encode(f":{k}:") for k in words_dict.keys()],
-        'freq': [v for v, _ in words_dict.values()],
-        'freq_doc': [v for _, v in words_dict.values()]
-    }).sort_values(by=['freq', 'freq_doc']).reset_index(drop=True)
-    
 def convertToNFX(series, type: str):
     return series.apply(lambda x: unicodedata.normalize(type, x))
     
-    
-def wordFrequencyBarplot(pdata: pd.DataFrame):
-    ind = np.arange(len(pdata))
-    width = 0.4
 
-    fig, ax = plt.subplots(figsize=(10, 30))
-    b1 = ax.barh(ind, pdata['freq'], width, color='red', label='Entire-based')
-    b2 = ax.barh(ind + width, pdata['freq_doc'], width, color='green', label='Document-based')
-    
-    ax.set(yticks=ind + width, yticklabels=pdata['word'], ylim=[2*width -1, len(pdata)])
-    ax.legend()
-    ax.bar_label(b1, label_type='edge')
-    ax.bar_label(b2, label_type='edge')
 
-    plt.show()
-    
-
-def vectorizer(pdata: pd.Series, pmethod: str ,pmin_df=1, pmax_df=1.0):
+def vectorizer(pdata: pd.Series, pmethod: str ,pmin_df=1):
     pdata = convertToNFX(pdata, 'NFC')
-    if pmethod == 'bow': vec = CountVectorizer(min_df=pmin_df, max_df=pmax_df)
-    else: vec = TfidfVectorizer(min_df=pmin_df, max_df=pmax_df)
+    if pmethod == 'bow': vec = CountVectorizer(min_df=pmin_df)
+    else: vec = TfidfVectorizer(min_df=pmin_df)
     
     transform = vec.fit_transform(pdata)
     return [vec, transform]
 
 
 def dataSplitSaved(pdata: pd.DataFrame, ptest_size: float, ppath: str):
-    X_train, X_test, y_train, y_test = train_test_split(pdata.iloc[:, -1],pdata.iloc[:, :-1], test_size=ptest_size, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(pdata.normalize_comment,pdata.label, test_size=ptest_size, random_state=42)
     
     path = f"{ppath}/train"
     if not(os.path.exists(path)):
@@ -116,8 +74,8 @@ def dataSplitSaved(pdata: pd.DataFrame, ptest_size: float, ppath: str):
     if not(os.path.exists(path)):
       os.makedirs(path)
 
-    X_test.to_csv(path+"X.csv", index=False)
-    y_test.to_csv(path+"y.csv", index=False)
+    X_test.to_csv(path+"/X.csv", index=False)
+    y_test.to_csv(path+"/y.csv", index=False)
     
     print(f"📢 Your dataset has saved at {ppath}.")
     
@@ -135,37 +93,16 @@ def train(lst_models, X_vectorizer, y, cv):
                               np.abs(cv_res['train_accuracy'].mean() - cv_res['test_accuracy'].mean()),
                               cv_res['train_accuracy'].std(),
                               cv_res['test_accuracy'].std(),
-                              cv_res['train_roc_auc'].mean(),
-                              cv_res['test_roc_auc'].mean(),
-                              np.abs(cv_res['train_roc_auc'].mean() - cv_res['test_roc_auc'].mean()),
-                              cv_res['train_roc_auc'].std(),
-                              cv_res['test_roc_auc'].std(),
                               cv_res['fit_time'].mean()
             ])
             toc = time.time()
             print('\tModel {} has been trained in {:,.2f} seconds'.format(mdl_name, (toc - tic)))
             
     
-    res_table = pd.DataFrame(res_table, columns=['vectorizer', 'model', 'train_acc', 'test_acc', 'diff_acc',
-                                                 'train_acc_std', 'test_acc_std', 'train_roc_auc', 'test_roc_auc',
-                                                 'diff_roc_auc', 'train_roc_auc_std', 'test_roc_auc_std', 'fit_time'])
-    res_table.sort_values(by=['test_acc', 'test_roc_auc'], ascending=False, inplace=True)
-    return res_table.reset_index(drop=True)    
-    
-
-    
-def trainTunningModel(lst_models, X_vectorizer, y, cv):
-    models_final = []
-    for model_name, model, params in lst_models:
-        tic = time.time()
-        search = GridSearchCV(estimator=model, param_grid=params, cv=cv, scoring='accuracy')
-        search.fit(X_vectorizer, y)
-        model_tunned = model.set_params(**search.best_params_)
-        models_final.append((model_name, model_tunned))
-        toc = time.time()
-        print('Model {} has been tunned in {:,.2f} seconds'.format(model_name, (toc - tic)))
-        
-    return models_final    
+    res_table = pd.DataFrame(res_table, columns=['vectorizer', 'model', 'train_acc', 'test_acc',
+                                                 'train_acc_std', 'test_acc_std', 'fit_time'])
+    res_table.sort_values(by=['test_acc'], ascending=False, inplace=True)
+    return res_table.reset_index(drop=True)     
     
     
 def evaluation(tunning_models, X_train_vec, y_train, X_test_vec, y_test):
@@ -180,8 +117,8 @@ def evaluation(tunning_models, X_train_vec, y_train, X_test_vec, y_test):
         test_roc_auc = roc_auc_score(y_test, y_test_pred)
         res.append([name, train_acc, test_acc, train_roc_auc, test_roc_auc])
         
-    res = pd.DataFrame(res, columns=['model', 'train_acc', 'test_acc', 'train_roc_auc', 'test_roc_auc'])
-    res.sort_values(by=['test_acc', 'test_roc_auc'], ascending=False, inplace=True)
+    res = pd.DataFrame(res, columns=['model', 'train_acc', 'test_acc'])
+    res.sort_values(by=['test_acc'], ascending=False, inplace=True)
     
     return res.reset_index(drop=True)
     
@@ -204,49 +141,6 @@ def saveByPickle(object, path):
     print(f"{object} has been saved at {path}.")
 
 
-def generateNGrams(ptext: str, pn: int):
-    words = ptext.split(" ")
-    compounds = zip(*[words[i:] for i in range(pn)])
-    return np.array([(' '.join(compound), '_'.join(compound)) for compound in compounds])
-
-def getDashWords(pcomments, pngrams):
-    ngram_words = {}
-    for i, cmt in enumerate(pcomments):
-        for n in pngrams:
-            cpws = generateNGrams(cmt, n)
-            for cp, cp_ in cpws:
-                if ngram_words.get(cp, None) == None:
-                    ngram_words[cp] = [1, 1] # dash, entrire, doc
-                else:
-                    ngram_words[cp][0] += 1
-                    ngram_words[cp][1] += int(ngram_words[cp][1] <= i)
-                    
-    df = pd.DataFrame({
-        'freq_doc': [v for _, v in ngram_words.values()],
-        'freq': [v for v, _ in ngram_words.values()]
-    }, index=ngram_words.keys())
-    
-    df = df.sort_values(by=['freq_doc', 'freq'], ascending=False)
-    return df
-        
-        
-def replaceInNGrams(pcomments, pngrams: List[int], ngrams_dict, on_col, min_df=1, max_df=99999999999):                    
-    dash_comments = []
-    for cmt in pcomments:
-        ngrams_words = []
-        for n in pngrams:
-            for cp, cp_ in generateNGrams(cmt, n):
-                if ngrams_dict.get(cp, None) is None: continue
-                if min_df <= ngrams_dict.loc[cp, on_col] <= max_df:
-                    ngrams_words.append((ngrams_dict.loc[cp, on_col], cp, cp_))
-        
-        ngrams_words = sorted(ngrams_words, reverse=True)
-        for _, cp, cp_ in ngrams_words:
-            cmt = re.sub(cp, f" {cp_} ", cmt)
-            
-        dash_comments.append(re.sub("\s+", " ", cmt.strip()))
-                    
-    return dash_comments
 
 def combinePrediction(a, b, c):
     neg = (a[0] + b[0] + c[0])/3

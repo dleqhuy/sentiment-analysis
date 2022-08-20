@@ -2,7 +2,7 @@
 
 ## Sentiment Analysis for Shopee
 
-|                                                             	| Accuracy on Training Set 	| Accuracy on Validation Set 	| Accuracy on Validation Set 	|
+|                                                             	| Accuracy on Training Set 	| Accuracy on Validation Set 	| Accuracy on Test Set      	|
 |:------------------------------------------------------------	|:------------------------:	|:--------------------------:	|:--------------------------:	|
 | TF-IDF & SVC                                                	| 0.904                    	| 0.855                      	| 0.852                      	|
 | TF-IDF & Logistic Regression                                	| 0.890                    	| 0.859                      	| 0.851                      	|

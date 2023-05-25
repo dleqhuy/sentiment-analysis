@@ -1,3 +1,6 @@
 selenium
 pyenchant
 underthesea
+pandas
+evaluate
+transformers

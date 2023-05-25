@@ -111,7 +111,7 @@ def getProductURLs(purl: str, prange: tuple, pcssSelector: str):
     return product_info
             
      
-def getProductReviewsAPI(pproductURL: str) -> (List[Review]):
+def getProductReviewsAPI(pproductURL: str) -> (List):
     """
     Hàm này dùng để crawl data bằng cách sử dụng API.
 

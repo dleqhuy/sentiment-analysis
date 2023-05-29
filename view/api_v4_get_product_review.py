@@ -5,7 +5,6 @@ import pandas as pd
 
 from pydantic import BaseModel
 
-
 class ItemParams(BaseModel):
     orderid: str
     itemid: str
@@ -18,9 +17,7 @@ class ItemParams(BaseModel):
     mtime: int
     t_mtime: str
     insert_date: str
-    product_quality: int
-    seller_service: int
-    delivery_service: int
+
 
 class ProductDetailCrawler:
     def __init__(self):
@@ -49,9 +46,7 @@ class ProductDetailCrawler:
                         t_ctime=transfor_ctime,
                         t_mtime=transfor_mtime,
                         insert_date=self.today_date,
-                        product_quality=item["detailed_rating"]["product_quality"],
-                        seller_service=item["detailed_rating"]["product_quality"],
-                        delivery_service=item["detailed_rating"]["product_quality"]
+
                     )
                     self.items_list.append(item_info.dict())
 
@@ -83,7 +78,7 @@ class ProductDetailCrawler:
             num = 0
             while num < cmt_product_count:
                 crawler_itme_urls.append(
-                    f"{self.search_item_api}?filter=0&flag=1&itemid={item_id}&limit=2&offset={str(num)}&shopid={shop_id}&type=0"
+                    f"{self.search_item_api}?filter=0&flag=1&itemid={item_id}&limit=50&offset={str(num)}&shopid={shop_id}&type=0"
                 )
                 num += 50
             main(crawler_itme_urls)

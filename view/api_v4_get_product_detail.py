@@ -122,7 +122,6 @@ class ProductDetailCrawler:
                     f"{self.search_item_api}?offset={str(num)}&limit=100&order=desc&filter_sold_out=3&use_case=1&sort_by=sales&order=sales&shopid={shop_id}"
                 )
                 num += 100
-            print(crawler_itme_urls)
             main(crawler_itme_urls)
 
         df = pd.DataFrame(self.items_list)

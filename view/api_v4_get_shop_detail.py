@@ -21,7 +21,6 @@ class ShopParams(BaseModel):
     shop_rating_good: int
     shop_rating_bad: int
     shop_rating_normal: int
-    # description: str
 
     class Config:
         allow_extra = False

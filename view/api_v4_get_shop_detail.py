@@ -22,9 +22,6 @@ class ShopParams(BaseModel):
     shop_rating_bad: int
     shop_rating_normal: int
 
-    class Config:
-        allow_extra = False
-
 
 class ShopDetailCrawler:
     def __init__(self):

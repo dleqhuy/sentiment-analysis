@@ -51,8 +51,6 @@ class ItemParams(BaseModel):
     show_free_shipping: bool
     insert_date: str
 
-    class Config:
-        allow_extra = False
 
 
 class ProductDetailCrawler:

@@ -3,18 +3,18 @@
 ## Mục tiêu 
 Mục tiêu của repo này bao gồm  
 1. Thu thập dữ liệu từ sàn thương mại điện tử Shopee 
-2. Xử lí dữ liệu và gán nhãn
+2. Xử lí dữ liệu
 3. phân tích sản phẩm trên Shopee 
 4. phân tích sắc thái đánh giá sản phẩm trên Shopee bằng PhoBert 
 
 ## Tiền xử lý dữ liệu
 
-Đối với dữ liệu thô, ta sẽ lần lượt làm sạch, chuẩn hoá và gán nhãn. Sau khi xoá bỏ dữ liệu trùng lắp, các dữ liệu hữu ích và chứa thông tin chỉ bao gồm hơn 16000 mẫu dữ liệu
+Đối với dữ liệu đánh giá sản phẩm thô, ta sẽ lần lượt làm sạch, chuẩn hoá và gán nhãn. Sau khi xoá bỏ dữ liệu trùng lắp, các dữ liệu hữu ích và chứa thông tin chỉ bao gồm hơn 16000 mẫu dữ liệu
 
 ## ▍Cách sử dụng：
 
 ### 1. Sửa đổi cấu hình
-<br> Sửa đổi thông số input_shop_names trong main.py và đặt vào cửa hàng bạn muốn theo dõi (ví dụ: https://shopee.vn/rosi_accessories , thêm "rosi_accessories" vào danh sách)
+<br> Sửa đổi thông số user_list trong main.py và đặt vào cửa hàng bạn muốn theo dõi (ví dụ: https://shopee.vn/rosi_accessories , thêm "rosi_accessories" vào danh sách)
 ```
 user_list = [
     "rosi_accessories"

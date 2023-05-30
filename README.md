@@ -5,7 +5,7 @@ Mục tiêu của repo này bao gồm
 1. Thu thập dữ liệu từ sàn thương mại điện tử Shopee 
 2. Xử lí dữ liệu
 3. phân tích sản phẩm trên Shopee 
-4. phân tích sắc thái đánh giá sản phẩm trên Shopee bằng PhoBert 
+4. phân tích sắc thái đánh giá sản phẩm trên Shopee bằng underthesea 
 
 ## Tiền xử lý dữ liệu
 

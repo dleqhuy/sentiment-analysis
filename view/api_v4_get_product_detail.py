@@ -2,7 +2,7 @@ import os
 import datetime
 import requests
 import pandas as pd
-
+from tqdm import tqdm 
 from pydantic import BaseModel
 
 
@@ -102,7 +102,7 @@ class ProductDetailCrawler:
             r1 = requests.get('https://shopee.vn')
             [
                 get_item_detail(r1.cookies, query_url)
-                for query_url in crawler_itme_urls
+                for query_url in tqdm(crawler_itme_urls)
                 ]
                 
 
@@ -110,10 +110,10 @@ class ProductDetailCrawler:
             columns=[field.name for field in ItemParams.__fields__.values()]
         )
         df_header.to_csv(self.basepath + "/csv/pdp_detail.csv", index=False)
-
+        
+        crawler_itme_urls = []
         for row in shop_detail.itertuples():
-            crawler_itme_urls = []
-
+            
             shop_id = row.shopid
             shop_product_count = row.item_count
             num = 0
@@ -122,7 +122,8 @@ class ProductDetailCrawler:
                     f"{self.search_item_api}?offset={str(num)}&limit=100&order=desc&filter_sold_out=3&use_case=1&sort_by=sales&order=sales&shopid={shop_id}"
                 )
                 num += 100
-            main(crawler_itme_urls)
+                
+        main(crawler_itme_urls)
 
         df = pd.DataFrame(self.items_list)
         df.to_csv(

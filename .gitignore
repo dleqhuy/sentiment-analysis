@@ -1,5 +1,12 @@
 view/csv/pdp_comment_raw.csv
 view/csv/pdp_detail.csv
 view/csv/shop_detail.csv
+view/csv/sentences.txt
 
 .gitignore
+view/__pycache__/api_v4_get_product_detail.cpython-310.pyc
+view/__pycache__/api_v4_get_product_review.cpython-310.pyc
+view/__pycache__/api_v4_get_shop_detail.cpython-310.pyc
+view/preproc_sentiment/splitwords/algorithms/__pycache__/__init__.cpython-310.pyc
+view/preproc_sentiment/splitwords/__pycache__/__init__.cpython-310.pyc
+view/preproc_sentiment/splitwords/__pycache__/core.cpython-310.pyc

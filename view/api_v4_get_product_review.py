@@ -3,6 +3,7 @@ import datetime
 import requests
 import pandas as pd
 
+from tqdm import tqdm 
 from pydantic import BaseModel
 
 class ItemParams(BaseModel):
@@ -19,7 +20,7 @@ class ItemParams(BaseModel):
     insert_date: str
 
 
-class ProductDetailCrawler:
+class ProductReviewCrawler:
     def __init__(self):
         self.basepath = os.path.abspath(os.path.dirname(__file__))
 
@@ -60,7 +61,7 @@ class ProductDetailCrawler:
             r1 = requests.get('https://shopee.vn')
             [
                 get_item_detail(r1.cookies, query_url)
-                for query_url in crawler_itme_urls
+                for query_url in tqdm(crawler_itme_urls)
                 ]
                 
 
@@ -68,9 +69,10 @@ class ProductDetailCrawler:
             columns=[field.name for field in ItemParams.__fields__.values()]
         )
         df_header.to_csv(self.basepath + "/csv/pdp_comment_raw.csv", index=False)
+        
+        crawler_itme_urls = []
 
         for row in shop_detail.itertuples():
-            crawler_itme_urls = []
 
             shop_id = row.shopid
             item_id = row.itemid
@@ -81,7 +83,7 @@ class ProductDetailCrawler:
                     f"{self.search_item_api}?filter=0&flag=1&itemid={item_id}&limit=50&offset={str(num)}&shopid={shop_id}&type=0"
                 )
                 num += 50
-            main(crawler_itme_urls)
+        main(crawler_itme_urls)
 
         df = pd.DataFrame(self.items_list)
         df.to_csv(
@@ -103,5 +105,5 @@ if __name__ == "__main__":
     basepath = os.path.abspath(os.path.dirname(__file__))
     pdp_detail = pd.read_csv(basepath + "/csv/pdp_detail.csv")
     pdp_detail = pdp_detail[pdp_detail['cmt_count'] > 0]
-    crawler_product_review = ProductDetailCrawler()
+    crawler_product_review = ProductReviewCrawler()
     result_product_review = crawler_product_review(pdp_detail)

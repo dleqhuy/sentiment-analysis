@@ -33,9 +33,11 @@ $ python3 main.py
 ```
 ⌲ Step 1: Total shop detail fetchedd:
 ⌲ Step 2: Total pdp detail fetched:
-100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:02<00:00,  1.67it/s]
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:01<00:00,  2.35it/s]
 ⌲ Step 3: Total pdp review fetched:
-100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 1025/1025 [06:27<00:00,  2.65it/s]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 1025/1025 [08:24<00:00,  2.03it/s]
+⌲ Step 4: predict sntiment review:
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 31971/31971 [00:18<00:00, 1756.11it/s]
 
 ```
 
@@ -48,20 +50,17 @@ $ python3 main.py
 ├── img
 │   └── powerbi.jpg
 ├── main.py
-├── requirements.txt
-└── view
-    │
-    ├── api_v4_get_product_detail.py
-    ├── api_v4_get_product_review.py
-    ├── api_v4_get_shop_detail.py
-    ├── csv
-    │   ├── pdp_comment_raw.csv
-    │   ├── pdp_detail.csv
-    │   ├── sentences.txt
-    │   └── shop_detail.csv
-    └── preproc_sentiment
-        ├── predict.py
-        └── split.py
+├── module
+│   ├── api_v4_get_product_detail.py
+│   ├── api_v4_get_product_review.py
+│   ├── api_v4_get_shop_detail.py
+│   ├── csv
+│   │   ├── pdp_comment_raw.csv
+│   │   ├── pdp_detail.csv
+│   │   ├── predict_sentiment.csv
+│   │   └── shop_detail.csv
+│   └── processor.py
+└── requirements.txt
         
 ```
 

@@ -1,12 +1,7 @@
-from view.api_v4_get_shop_detail import ShopDetailCrawler
-from view.api_v4_get_product_detail import ProductDetailCrawler
-from view.api_v4_get_product_review import ProductReviewCrawler
-
-
-import logging
-
-logger = logging.getLogger(__name__)
-
+from module.api_v4_get_shop_detail import ShopDetailCrawler
+from module.api_v4_get_product_detail import ProductDetailCrawler
+from module.api_v4_get_product_review import ProductReviewCrawler
+from module.processor import PredictSentiment
 
 class Crawler:
     def __init__(self, user_list):
@@ -25,10 +20,15 @@ class Crawler:
         crawler_product_detail = ProductDetailCrawler()
         result_product_detail = crawler_product_detail(result_shop_detail)
 
-        # Step 2 > input shop_detail > get product_id
+        # Step 3 > input product_id > get product_review
         print(f"⌲ Step 3: Total pdp review fetched:")
         crawler_product_review = ProductReviewCrawler()
         result_product_review = crawler_product_review(result_product_detail)
+
+        # Step 4 > input product_id > get product_review
+        print(f"⌲ Step 4: predict sntiment review:")
+        predict = PredictSentiment()
+        predict(result_product_review)
 
 if __name__ == "__main__":
 

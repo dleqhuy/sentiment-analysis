@@ -10,3 +10,5 @@ view/__pycache__/api_v4_get_shop_detail.cpython-310.pyc
 view/preproc_sentiment/splitwords/algorithms/__pycache__/__init__.cpython-310.pyc
 view/preproc_sentiment/splitwords/__pycache__/__init__.cpython-310.pyc
 view/preproc_sentiment/splitwords/__pycache__/core.cpython-310.pyc
+module/csv/predict_sentiment.csv
+*.csv
